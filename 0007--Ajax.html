@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>原生Ajax</title>
+    <script type="text/javascript">
+        window.onload = function () {
+            //第一步：创建xhr对象
+            var xhr = null;
+            if (window.XMLHttpRequest) {  //标准浏览器
+                xhr = new XMLHttpRequest();  //实例化对象
+            }else {  //IE6,7,8
+                xhr = new ActiveXObject('Microsoft.XMLHTTP');
+            }
+
+            console.log("状态A"+xhr.readyState);//0
+
+            //第二步：初始化请求--配置发送请求的行为，准备好发送
+            xhr.open('get','0007--Ajax.php',true);
+
+            console.log("状态B"+xhr.readyState);//1
+
+            //第三步：执行发送的动作（通常写在第四步之后）
+            xhr.send(null);
+
+            console.log("状态C"+xhr.readyState);//1
+
+            //第四步：指定回调函数。
+            // 这个回调函数是需要触发的，当xhr.readyState的值发生变化时才会触发回调函数
+            //而xhr.readyState的值的变化由浏览器控制，在0-4之间变化，5种状态
+            xhr.onreadystatechange = function () {
+                //console.log("状态E"+xhr.readyState);//2 3 4
+                if (xhr.readyState == 4) {//只有返回4时，才表示服务器返回的数据已经可以使用
+                    if (xhr.status == 200) {  //请求成功并已经获取到数据
+                        var data = xhr.responseText;//json
+                        //var data1 = xhr.responseXML;//以前的方式
+                    }
+                }
+            };
+
+            console.log("状态D"+xhr.readyState);//1
+        };
+    </script>
+</head>
+<body>
+<div>
+    <div id="showInfo"></div>
+    <!--<form action="./0007&#45;&#45;Ajax.php" method="get">
+      Ajax中这句form的默认事件由JS来控制-->
+    <form>
+        用户名：<input type="text" name="username" id="username"><br>
+        密码：<input type="password" name="password" id="password"><br>
+        <input type="submit" value="提交" id="btn">
+    </form>
+</div>
+</body>
+</html>

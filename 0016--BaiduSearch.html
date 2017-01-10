@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>百度智能搜索提示</title>
+    <style type="text/css">
+        #sug{
+            position: absolute;
+            left: 50%;
+            margin-left: -150px;
+            width: 300px;
+            background: lightGreen;
+            height: 40px;
+            text-align: center;
+        }
+        #sug input{
+            margin-top: 10px;
+        }
+        #list{
+            position: absolute;
+            left: 50%;
+            top:50px;
+            width: 200px;
+            margin-left: -150px;
+            height: auto;
+            background: lightBlue;
+            display: none;
+        }
+        #list ul{
+            padding-left: 0px;
+            margin: 0px;
+        }
+        #list ul li{
+            background: lightGray;
+            line-height: 30px;
+            list-style: none;
+            padding-left: 10px;
+            margin-top: 0px;
+            cursor: pointer;
+        }
+        #list ul li.on{
+            background: lightGreen;
+        }
+    </style>
+    <!--<script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>-->
+    <script src="jquery-1.11.1.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            $("#keyWord").keyup(function () {
+                var kw = $("#keyWord").val();
+                var url = 'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd=' + kw;
+                querySUG(url);
+            });
+        });
+
+            function querySUG(url) {
+                document.getElementById('list').innerHTML = '';
+                $.ajax({
+                    type: "get",
+                    async: true,
+                    url: url,
+                    dataType: "jsonp",
+                    jsonp: "cb",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名（默认为callback)
+                    //jsonpCallback: "callback",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名
+                    success: function (data) {
+
+                        var ul = $("<ul></ul>");
+                        $.each(data.s,function (index,ele) {
+                            var e = $("<li></li>").append(ele);
+                            $(ul).append(e);
+                        });
+                        $("#list").append(ul).show();
+                    },error: function () {
+                        console.log('fail');
+                    }
+                })
+            }
+
+    </script>
+</head>
+<body>
+<div id="sug">
+    <div>
+        <input type="text" id="keyWord" autocomplete="off">
+        <input type="button" value="百度一下" id="btn"></div>
+</div>
+<div id="list">
+    
+</div>
+</body>
+</html>

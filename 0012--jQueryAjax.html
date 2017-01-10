@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jQuery-Ajax</title>
+    <script src="jquery-1.11.1.js"></script>
+    <script>
+        $(function () {
+            $('#btn').on('click',function () {
+                $.ajax({
+                    type:"get",
+
+//                    url:"0012--jQueryAjax01.php",
+//                    url:"0012--jQueryAjax02.php",
+//                    url:"0012--jQueryAjax03.php",
+                    url:"0012--jQueryAjax04.php",
+
+//                   dataType:"json",  //php返回数据类型为json，即例0012--jQueryAjax01.php
+//                    dataType:"html",  //02
+//                    dataType:"script",  //03
+                    dataType:"text",
+
+                    success:function (data) {
+//                         alert(data.username);   //01
+//                         alert(data);            //02
+//                         eval(data);             //03
+//                        alert(data);
+
+                        var $msg = $('<h5></h5>');
+                        var $isNFC = data.isNFC;
+                        $msg.html(isNFC == 'NULL' ? '输入内容不能为空':'')
+                        $msg.appendTo(a);
+                    }
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+<input type="button" value="点击" id="btn">
+</body>
+</html>

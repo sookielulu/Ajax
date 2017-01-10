@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XML数据解析</title>
+    <script type="text/javascript">
+        window.onload = function () {
+            var btn = document.getElementById("btn");
+            btn.onclick = function () {
+                var xhr = null;
+                if (window.XMLHttpRequest) {  //标准浏览器
+                    xhr = new XMLHttpRequest();  //实例化对象
+                }else {  //IE6,7,8
+                    xhr = new ActiveXObject('Microsoft.XMLHTTP');
+                }
+
+                xhr.open('get','./detail/0009--data.xml',true);
+                xhr.send(null);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        //这里的responseXML表示整个文档的内容是个XML对象，而不是字符串
+                        var data = xhr.responseXML;
+
+                        //获取到文档的最外层标签
+                        var bs = data.getElementsByTagName('bookstore')[0];
+                        var books = bs.getElementsByTagName('book');
+                        var tag = '';
+                        for (var i = 0; i < books.length; i++) {
+                            var book = books[i];
+                            //这里的name,category,desc得到的都是节点，也就是标签及其内容
+                            var name = book.getElementsByTagName('name')[0];
+                            var category = book.getElementsByTagName('category')[0];
+                            var desc = book.getElementsByTagName('desc')[0];
+                            tag += '<tr><td>'+getNodeText(name)+'</td><td>'+getNodeText(category)+'</td><td>'+getNodeText(desc)+'</td></tr>';
+                        }
+                        var tbody = document.createElement('tbody');
+                        tbody.innerHTML = tag;
+                        document.getElementById('bookInfo').appendChild(tbody);
+                    }
+                };
+
+            };
+            function getNodeText(node) {
+                if (window.ActiveXObject) { //IE浏览器
+                    return node.text;
+                }else {
+                    if (node.nodeType == 1) { //标准浏览器
+                        return node.textContent;
+                        //nodeType 属性返回以数字值返回指定节点的节点类型。
+                        //如果节点是元素节点（即标签），则 nodeType 属性将返回 1。
+                        //如果节点是属性节点，则 nodeType 属性将返回 2。
+                        //如果节点是文本节点，则 nodeType 属性将返回 3。
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body>
+<div>
+    <input type="button" value="点击" id="btn">
+    <div>
+        <table id="bookInfo">
+
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EMS</title>
+    <style type="text/css">
+        #ems{
+            position: absolute;
+            left: 50%;
+            width: 400px;
+            height: auto;
+            margin-left: -200px;
+            background: lightGreen;
+            text-align: center;
+            min-height: 50px;
+            height: 500px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+        #ems input{
+            height: 25px;
+            margin-top: 10px;
+        }
+        #list{
+            background: lightBlue;
+        }
+        #list li{
+            text-align: left;
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = function () {
+//            这个例子用9971121346085来查询
+            var btn = document.getElementById('btn');
+            btn.onclick = function () {
+                var code = document.getElementById('code').value;
+                var xhr = null;
+                //javascript中的代码，一旦有异常就停止执行
+                //而try,catch语句中，try中代码异常，会跳转到catch中执行，且不影响其他代码的执行
+                try{
+                    xhr = new XMLHttpRequest();
+
+                    //try中若代码出错，则try中此处后续代码不执行
+                }catch(e) {
+                    xhr = new ActiveXObject('Microsoft.XMLHTTP');
+                }
+
+                xhr.open('get','0011--ems.php?code='+code);  //可不加参数，默认为true
+
+                xhr.send(null);
+
+                xhr.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        //将json字符串转换为json对象
+                        var data = JSON.parse(this.responseText);
+                        if (data.status == 0) {
+                            var list = data.data.info.context;  //这里是个数组
+                            var tag = '';
+                            for (var i = 0; i < list.length; i++) {//获取数据并拼接字符串
+                                var item = list[i];
+                                var time = item.time;
+                                var desc = item.desc;
+                                var t = new Date();
+                                t.setTime(time+'000');  //php文件中的时间为s，这里改为ms
+                                var str = t.getFullYear()+'年'+(t.getMonth()+1)+'月'                                                 +t.getDate()+'日'+(t.getHours()>12?' 下午':'上午')                                         +t.getHours()%12+':'+t.getMinutes()+':'+t.getSeconds();
+                                tag += '<li><div>'+str+'</div><div>'+desc+'</div></li>';
+                            }
+
+                            var ul = document.createElement('ul');
+                            ul.innerHTML = tag;
+                            document.getElementById('list').appendChild(ul);
+
+                        }else {
+                            var info = data.msg;
+                            document.getElementById('list').innerHTML = info;
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="ems">
+    <div>
+        <input type="text" id="code">
+        <input type="button" value="查询" id="btn">
+    </div>
+    <div id="list">
+    </div>
+</div>
+</body>
+</html>

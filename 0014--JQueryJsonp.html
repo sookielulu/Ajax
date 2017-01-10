@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery中的jsonp</title>
+    <script src="jquery-1.11.1.js"></script>
+    <script>
+        $(function () {
+            $.ajax({
+                type: "get",
+                async: false,
+                url: "./0014--jQueryJsonp.php", //13,14行相当于在这里后面加上?name=lucy
+                dataType: "jsonp",
+                jsonp: "name",//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名（默认为callback）
+                jsonpCallback: "lucy",//自定义的jsonp回调函数名称，默认为jQuery自动生成的随机函数名，类似于：jQuery1102016820125717172015_145323456565(["lucy","tom"]);
+                success: function (json) {
+                    console.log(json);
+                },
+                error: function () {
+                    console.log('fail');
+                }
+            })
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

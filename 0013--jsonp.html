@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>jsonp</title>
+    <script type="text/javascript">
+        function callback(data) {  /*这里的函数由php调用*/
+            console.log(data);
+            console.log(data[2]);
+        }
+    </script>
+    <script  type="text/javascript" src="0013--jsonpWeather.php?_jsonp=callback">                    /*12行表示访问接口*/  /*_jsonp=后面的内容要与第7行函数名保持一致，php中无所谓*/
+    </script>
+    <!--上面的12-14行就相当于callback(["lucy","jack","tom"])，只是代码被写到了服务器-->
+
+    <script>
+        function callback(data) {
+            console.log(data);
+            console.log(data[2]);
+        }
+    </script>
+    <script src="0013.php?_jsonp=callback">
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

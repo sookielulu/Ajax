@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>城市天气</title>
+    <style type="text/css">
+        #weather{
+            position: absolute;
+            left: 50%;
+            margin-left: -150px;
+            width: 300px;
+            background: lightGreen;
+            height: 500px;
+            text-align: center;
+        }
+        #weather select,input{
+            height: 30px;
+            margin-top: 10px;
+        }
+        #weaInfo{
+            background: lightBlue;
+            width: 300px;
+            margin-top: 10px;
+        }
+        #weaInfo ul{
+            padding-left: 0px;
+            list-style: none;
+            text-align: left;
+            padding-top: 10px;
+        }
+        #weaInfo ul li{
+            height: 30px;
+            padding-left: 50px;
+        }
+    </style>
+    <script src="jquery-1.11.1.js"></script>
+    <script src="template.js"></script>
+    <script id="artid" type="text/html">
+        {{if longitude}}
+            <ul>
+                <li>经度:{{longitude}}</li>
+                <li>纬度:{{latitude}}</li>
+            </ul>
+        {{/if}}
+    </script>
+
+
+    <script type="text/javascript">
+        $(function(){
+
+            $('#btn').click(function(){
+                var cityName = $('#weather option:selected').text();
+                //alert(cityName);
+                queryWeather(cityName);
+            });
+
+        });
+
+
+        function queryCitycode(cityCode){
+            $.ajax({
+                type : "get",
+                url : './0015--cityWeather--weather.php',
+                dataType : "json",
+                data:{cityCode:cityCode},
+                success : function(data){
+
+                    //下面两行为artTemplate的两种写法，后面71-86为普通写法
+
+                    //写法一：
+                    //注意id的对应，此处即为artid
+                    var html = template('artid',data.retData);
+                    $('#weaInfo').html(html);
+
+
+                    //写法二：
+                    /*var tag = '{{if longitude}}'
+                            +'<ul>'
+                                +'<li>经度:{{longitude}}</li>'
+                                +'<li>纬度:{{latitude}}</li>'
+                            +'</ul>'
+                            +'{{/if}}';
+                    var render = template.compile(tag);
+                    var html = render(data.retData);
+                    $('#weaInfo').html(html);*/
+
+
+                   //var wea = data.retData;
+                   ////解析天气内容
+                   //var tag = '';
+                   //tag += '<li>经度:' +wea.longitude+ '</li>';
+                   //tag += '<li>维度:' +wea.latitude+ '</li>';
+                   //tag += '<li>海拔高度:' +wea.altitude+ '</li>';
+                   //tag += '<li>天气:' +wea.weather+ '</li>';
+                   //tag += '<li>温度:' +wea.temp+ '</li>';
+                   //tag += '<li>最高温度:' +wea.h_tmp+ '</li>';
+                   //tag += '<li>最低温度:' +wea.l_tmp+ '</li>';
+                   //tag += '<li>风向:' +wea.WD+ '</li>';
+                   //tag += '<li>风速:' +wea.WS+ '</li>';
+                   //tag += '<li>日出时间:' +wea.sunrise+ '</li>';
+                   //tag += '<li>日落时间:' +wea.sunset+ '</li>';
+                   //var info = $('<ul>').html(tag);
+                   //$('#weaInfo').html(info);
+                },error:function(){
+                    console.log('fail');
+                }
+            });
+        }
+        function queryWeather(cityName){
+            $.ajax({
+                type : "get",
+                url : './0015--cityWeather--citycode.php',
+                dataType : "json",
+                data:{cityName:cityName},
+                success : function(data){
+//                    alert(data.cityCode);
+                    queryCitycode(data.cityCode);
+                },error:function(){
+                    console.log('fail');
+                }
+            });
+
+
+        }
+    </script>
+</head>
+<body>
+<div id="weather">
+    <div>
+        <select>
+            <option value="1">北京</option>
+            <option value="2">上海</option>
+            <option value="3">广州</option>
+            <option value="4">深圳</option>
+        </select>
+        <input type="button" value="查询" id="btn">
+    </div>
+    <div id="weaInfo"></div>
+</div>
+</body>
+</html>

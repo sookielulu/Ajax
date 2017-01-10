@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>回调函数</title>
+    <script type="text/javascript">
+        window.onload = function () {
+
+            //回调函数类似下列两种情况
+
+            //通过setTimeout使得fn延时1s执行，即先输出456
+            var fn = function () {
+                console.log(123);
+            };
+            setTimeout(fn,1000);
+            console.log(456);
+
+            //在不点击按钮时不会输出
+            var btn = document.getElementById("btn");
+            btn.onclick = function () {
+                console.log("点击了按钮");
+            }
+        }
+    </script>
+</head>
+<body>
+<button id="btn">按钮</button>
+</body>
+</html>

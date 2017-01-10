@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajax实例</title>
+    <script type="text/javascript">
+        window.onload = function () {
+            var btn = document.getElementById("btn");
+            btn.onclick = function () {
+                var xhr = null;
+                if (window.XMLHttpRequest) {  //标准浏览器
+                    xhr = new XMLHttpRequest();  //实例化对象
+                }else {  //IE6,7,8
+                    xhr = new ActiveXObject('Microsoft.XMLHTTP');
+                }
+
+                var username = document.getElementById("username").value;
+                var password = document.getElementById("password").value;
+
+                //采用get方式
+                //有些低版本浏览器，输入中文会产生乱码，则加个encodeURIComponent(username)
+             var url = '0008--AjaxExample1.php?username='+encodeURIComponent(username)+'$password='+password;
+           xhr.open('get',url,true);
+            xhr.send(null);
+
+                //采用post方式
+               //var url = '0008--AjaxExample1.php';
+               //xhr.open('post',url,true);
+               //xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+               //var param = 'username='+username+'&password='+password;
+               //xhr.send(param);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4) {
+                        if (xhr.status == 200) {
+                            var data = xhr.responseText;
+                            console.log(data);
+                        }
+                    }
+                };
+
+            };
+        };
+    </script>
+</head>
+<body>
+<div>
+    <div id="showInfo"></div>
+    <!--<form action="./0007&#45;&#45;Ajax.php" method="get">
+      Ajax中这句form的默认事件由JS来控制-->
+    <form>
+        用户名：<input type="text" name="username" id="username"><br>
+        密码：<input type="password" name="password" id="password"><br>
+        <input type="button" value="提交" id="btn">
+    </form>
+</div>
+</body>
+</html>

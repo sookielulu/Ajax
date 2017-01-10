@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>菜谱</title>
+    <style>
+        .all {
+            margin-top: 30px;
+        }
+        .xh {
+            float: left;
+            margin-right: 20px;
+            color: red;
+            font-style: italic;
+            font-size: 30px;
+        }
+        #menu {
+            width: 500px;
+        }
+    </style>
+    <script src="jquery-1.11.1.js"></script>
+    <script>
+        //主要就两件事：
+        //1、从服务器获取数据
+        //2、解析数据
+
+
+//        http://apis.juhe.cn/cook/query?key=3e1dcd706f3f21875c6d7c5035351d75&rn=3&pn=0&dtype=jsonp&callback=handle&menu=牛肉
+//        http://apis.juhe.cn/cook/query?key=71bf18f50b462212d199d66ef65cbde0&rn=10&pn=3&dtype=jsonp&callback=handle&menu=%E8%A5%BF%E7%BA%A2%E6%9F%BF
+
+
+        //给搜索按钮注册事件
+        $(function () {
+            $("#btnSearch").click(function () {
+                //提示用户正在等待
+                var menu = $("#menu");
+                menu.text("正在加载...");
+
+                //获取文本框输入的值
+                var txt = $("#txtSearch").val();
+
+                //发送异步请求 jsonp
+                $.ajax({
+                    type: 'get',
+                    url: 'http://apis.juhe.cn/cook/query?key=71bf18f50b462212d199d66ef65cbde0&rn=3&pn=0&dtype=jsonp&menu=' + encodeURIComponent(txt),
+                    //这个URL不是XMLHttpRequest发送的请求，因为有跨域问题
+                    //这里是jsonp，是动态地设置script标签，将这个地址设置成script，会生成一个全局的函数，jQuery开头，后面是随机数
+                    //encodeURIComponent(txt)表示对输入的内容进行URL编码(因为通常搜索为中文)
+                    dataType: 'jsonp',
+                    success: function (data) {
+                        //收到数据后要先清空容器
+                        menu.text("");
+
+                        //解析数据
+                        if (data.resultcode != 200) {
+                            menu.text("没查到");
+                            return;
+                        }
+
+                        for (var i = 0; i < data.result.data.length; i++) {
+                            //循环到的每一道菜，这里data.result.data是一个数组
+                            var mydata = data.result.data[i];
+
+                            //添加标签及内容
+                            var all = $('<div class="all"></div>');
+                            menu.append(all);
+                            //标题
+                            var h2 = $('<h2>'+ mydata.title +'</h2>');
+                            all.append(h2);
+                            //简介
+                            var p = $('<p class="intro">'+ mydata.imtro +'</p>');
+                            all.append(p);
+                            //图片
+                            var img = $('<img src="'+ mydata.albums +'">');
+                            all.append(img);
+                            //主料
+                            var zl = $('<p class="zl">主料：'+ mydata.ingredients +'</p>');
+                            all.append(zl);
+                            //辅料
+                            var fl = $('<p class="fl">辅料：'+ mydata.burden +'</p>');
+                            all.append(fl);
+                            //步骤
+                            var steps = $('<div class="steps"></div>');
+                            all.append(steps);
+                            for (var j = 0; j < mydata.steps.length; j++) {
+                                var step = mydata.steps[j];
+                                //序号
+                                var xh = $('<em class="xh">'+ (j+1) +'.</em>');
+                                steps.append(xh);
+
+                                var c = $('<div class="c"></div>');
+                                steps.append(c);
+                                //步骤
+                                var p1 = $('<p>'+ step.step +'</p>');
+                                c.append(p1);
+                                //步骤的图片
+                                var p2 = $('<p><img src="'+ step.img +'"></p>');
+                                c.append(p2);
+                            }
+                            //每道菜之间有横线隔开
+                            menu.append('<hr>');
+                        }
+                        /*<div class="all">
+                                <h2>秘制红烧肉</h2>
+                                <p class="intro">简介简介</p>
+                                <img src="">
+                                <p class="zl">主料：哈哈</p>
+                                <p class="fl">辅料：哈哈</p>
+                                <div class="steps">
+                                    <em class="xh">1.</em>
+                                    <div class="c">
+                                        <p>第一步你猜是啥</p>
+                                        <p>图片哈</p>
+                                    </div>
+                                </div>
+                          </div>*/
+                    },
+                    error: function () {
+                        menu.text("错误");
+                    }
+                });
+            });
+        })
+    </script>
+</head>
+<body>
+<input type="text" id="txtSearch">
+<input type="button" value="搜索" id="btnSearch">
+<div id="menu">
+    <!--<div class="all">
+        <h2>秘制红烧肉</h2>
+        <p class="intro">简介简介</p>
+        <img src="">
+
+        <p class="zl">主料：哈哈</p>
+        <p class="fl">辅料：哈哈</p>
+        <div class="steps">
+            <em class="xh">1.</em>
+            <div class="c">
+                <p>第一步你猜是啥</p>
+                <p>图片哈</p>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="all">
+        <h2>秘制红烧肉</h2>
+        <p class="intro">简介简介</p>
+        <img src="">
+        <p class="zl">主料：哈哈</p>
+        <p class="fl">辅料：哈哈</p>
+        <div class="steps">
+            <em class="xh">1.</em>
+            <div class="c">
+                <p>第一步你猜是啥</p>
+                <p>图片哈</p>
+            </div>
+        </div>
+    </div>-->
+</div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>省市区三级联动</title>
+    <style>
+        #showInfo {
+            width: 500px;
+            height: 800px;
+            margin: 50px auto;
+            background-color: palegreen;
+            display: flex;
+            justify-content: space-between;
+        }
+        #showInfo div select {
+            width: 160px;
+        }
+    </style>
+    <script src="jquery-1.11.1.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            //通用的请求函数
+            function callback(id, code, flag) {
+                $.ajax({
+                    url: '0017--ProAndCity.php',
+                    type: 'get',
+                    dataType: 'jsonp',
+                    data: {citycode:code, flag: flag},
+                    success: function (data) {
+                        //console.log(data);
+                        $.each(data,function (index,ele) {
+                            var op = $("<option></option>").attr("value",ele.code).append(ele.name);
+                            $("#"+id).append(op);
+
+                        })
+                    }
+                })
+            }
+
+            //获取省份信息
+            var province = function (pCode) {
+                callback('province', pCode, 1);
+            };
+
+            //给省份注册选中事件
+            $("#province").change(function () {
+                $("#city").children("option").remove();
+                var pCode = $(this).val();
+                province(pCode);
+            });
+
+            //获取市信息
+            var city = function (pCode) {
+                callback('city', pCode, 2);
+            };
+
+            //给市注册选中事件
+            $("#city").change(function () {
+                $("#area").children("option").remove();
+                var cCode = $(this).val();
+                province(cCode);
+            });
+
+            //获取区信息
+            var area = function (cCode) {
+                callback('area', cCode, 3);
+            };
+
+            //调用获取省市区份信息
+            province(0);
+            city('110000');
+            area('110100');
+        })
+    </script>
+</head>
+<body>
+<div id="showInfo">
+    <div>
+        <select id="province">
+        </select>
+    </div>
+    <div>
+        <select id="city">
+        </select>
+    </div>
+    <div>
+        <select id="area">
+        </select>
+    </div>
+</div>
+</body>
+</html>
